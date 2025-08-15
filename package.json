@@ -1,0 +1,25 @@
+{
+  "name": "project-management",
+  "version": "1.0.0",
+  "description": "Project Management",
+  "keywords": [
+    "Backend",
+    "APIs",
+    "Routes",
+    "Project-Management"
+  ],
+  "license": "ISC",
+  "author": "Aaryan Wadhawan",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  }
+}
