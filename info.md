@@ -35,3 +35,10 @@ class ApiError extends Error {
 - Get this attribute data from the parent class 
 - Used to call the constructor of the parents class
 
+JWT (JsonWebToken)
+- [With Data] and [Without Data]
+- Usually two copies of token are there, one with user and other with DB.
+- Access Token (Expires within a short timespan) and Refresh Token (Expires after a long time span compared to Access token)
+- Everytime we SignIn to our account we have provide the server with Access Token and If our access token expires user has to provide server with refresh token.
+
+
