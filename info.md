@@ -41,4 +41,40 @@ JWT (JsonWebToken)
 - Access Token (Expires within a short timespan) and Refresh Token (Expires after a long time span compared to Access token)
 - Everytime we SignIn to our account we have provide the server with Access Token and If our access token expires user has to provide server with refresh token.
 
+Generating Access/Refresh Token Boilerplate
 
+``` 
+import jwt from 'jsonwebtoken';
+UserSchema.methods.generatingAccessToken = function () {
+    return jwt.sign (
+        {
+            _id : this._id,
+            username : this.username,
+            email : this.email
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresin : process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+};
+```
+
+Generating Temporary Token Boilerplate
+
+``` 
+UserSchema.methods.generateTempToken = function () {
+    const unHashedToken = crypto.randomBytes(20).toString("hex");
+
+    const hashedToken = crypto
+    .createHash("sha256")
+    .update(unHashedToken)
+    .digest("hex");
+
+    const tokenExpiry = Date.now() + (20*60*1000);
+
+    return {unHashedToken, hashedToken, tokenExpiry};
+}
+```
+
+- Generating mail template : using mailgen npm package
