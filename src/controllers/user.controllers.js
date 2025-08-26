@@ -7,7 +7,7 @@ import { emailVerficationMailGen } from '../utils/template.js';
 import dotenv from 'dotenv';
 dotenv.config ();
 
-const generateAccessAndRefreshToken = async (userId) => {
+export const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = User.findById (userId);
         const accessToken = user.generatingAccessToken();
@@ -73,6 +73,50 @@ export const registerUser = asyncHandler(async (req, res) => {
             200,
             "User registered successfully and verification email has been sent on your email",
             {user : createdUser}
+        )
+    )
+})
+
+export const login = asyncHandler(async (req, res) => {
+    const { email, username, password } = req.body;
+    if (!username || !email) {
+        throw new ApiError (400, "Username and email is required")
+    }
+
+    const user = await User.findOne ({email});
+    if (!user) {
+        throw new ApiError (400, "User doesn't exist.")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect (password);
+    if (!isPasswordValid) {
+        throw new ApiError (400, "Invalid password")
+    }
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+
+    const loggedInUser = await User.findById (user._id).select (
+        "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+    );
+
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+
+    return res
+    .status (200)
+    .cookie("accesstoken", accessToken, options)
+    .cookie("refreshtoken", refreshToken, options)
+    .json (
+        new ApiResponse (
+            200,
+            "User logged in successfully!",
+            {
+                user : loggedInUser,
+                accessToken,
+                refreshToken
+            }
         )
     )
 })

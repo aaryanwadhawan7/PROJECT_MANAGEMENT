@@ -3,7 +3,8 @@ import cors from 'cors';
 import healthCheckRouter from './routes/healthCheck.routes.js';
 import dotenv from 'dotenv';
 import authRouter from './routes/auth.routes.js';
-import {cookieParser} from 'cookie-parser';
+import cookieParser from 'cookie-parser';
+import { generateAccessAndRefreshToken } from './controllers/user.controllers.js';
 
 dotenv.config();
 
