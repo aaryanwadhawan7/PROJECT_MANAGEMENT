@@ -78,3 +78,22 @@ UserSchema.methods.generateTempToken = function () {
 ```
 
 - Generating mail template : using mailgen npm package
+- How to send email in nodejs ??? <br>
+mailgen : Generate email template (HTML) <br>
+
+mailtrap : Used to send email (Sandbox -> locally && API/SMTP -> production)
+- Decide whether I have to use locally or for production. (I am using Sandbox for now...)
+- Copy host, port, username and password in env (environment variable).
+- Also add env var like 
+APP_URL, 
+MAIL_FROM_NAME and 
+MAIL_FROM_EMAIL
+
+- nodemailer.createTransport [Take data from the sandbox]
+- mailgen -> theme, product -> name, link
+- Define sendTemplateEmail func.
+- 'node testEmail.js' to chdck the generated email via mailtrap
+
+
+
+

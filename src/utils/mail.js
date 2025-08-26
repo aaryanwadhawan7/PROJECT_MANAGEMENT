@@ -1,51 +1,39 @@
 // Generated mail template
 
 import Mailgen from "mailgen";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config ();
 
-// this fn will handle email verification buisness logic
-const emailVerficationMailGen = (username, verificationURLPath) => {
-  return {
-    body: {
-      name: username,
-      intro: "Welcome to our app!",
-      action: {
-        instructions:
-          "To verify your email, please click on the folowing button",
-        button: {
-          color: "#22BC66",
-          text: "Verify your email",
-          link: verificationURLPath,
-        },
-      },
-      outro:
-        "Need help, or have questions? Just reply to this email, we'd love to help.",
-    },
-  };
-};
+const transporter = nodemailer.createTransport({
+  host: process.env.MT_SMTP_HOST,
+  port: Number(process.env.MT_SMTP_PORT),
+  auth: {
+    user: process.env.MT_SMTP_USER,
+    pass: process.env.MT_SMTP_PASSWORD,
+  },
+});
 
 
-const forgotPasswordMailGen = (username, passwordResetUrl) => {
-  return {
-    body: {
-      name: username,
-      intro: "We got a request to reset your password!",
-      action: {
-        instructions:
-          "To reset your password click on the following button!",
-        button: {
-          color: "#22BC66",
-          text: "Reset password",
-          link: passwordResetUrl,
-        },
-      },
-      outro:
-        "Need help, or have questions? Just reply to this email, we'd love to help.",
-    },
-  };
-};
+const mailgen = new Mailgen ({
+  theme : 'default',
+  product : {
+    name : process.env.MAIL_FROM_NAME,
+    link : process.env.APP_URL
+  }
+})
 
-export {
-    emailVerficationMailGen,
-    forgotPasswordMailGen
+export async function sendTemplateEmail({ to, subject, templateBody }) {
+  const html = mailgen.generate(templateBody);
+  const text = mailgen.generatePlaintext(templateBody);
+
+  return transporter.sendMail({
+    from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_EMAIL}>`,
+    to,
+    subject,
+    html,
+    text,
+  });
 }
+
 
