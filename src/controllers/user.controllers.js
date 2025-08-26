@@ -1,9 +1,9 @@
-import { User } from '../models/user.models';
-import { ApiError } from '../utils/api-error';
-import { ApiResponse } from '../utils/api-response';
-import { asyncHandler } from '../utils/asyncHandler';
-import { sendTemplateEmail } from '../utils/mail';
-import { emailVerficationMailGen } from '../utils/template';
+import { User } from '../models/user.models.js';
+import { ApiError } from '../utils/api-error.js';
+import { ApiResponse } from '../utils/api-response.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { sendTemplateEmail } from '../utils/mail.js';
+import { emailVerficationMailGen } from '../utils/template.js';
 import dotenv from 'dotenv';
 dotenv.config ();
 
@@ -23,7 +23,7 @@ const generateAccessAndRefreshToken = async (userId) => {
     }
 }
 
-const resgisterUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
     const {email, username, password, role } = req.body;
 
     const existedUser = User.findOne ({

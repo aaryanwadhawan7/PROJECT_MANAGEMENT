@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import healthCheckRouter from './routes/healthCheck.routes.js';
 import dotenv from 'dotenv';
+import authRouter from './routes/auth.routes.js';
 dotenv.config();
 
 const app = express ();
@@ -20,5 +21,7 @@ app.use(cors ({
 // healthCheck route API handler
 // http://localhost:8000/api/v1/healthCheck/ -> calls the healthCheckRouter from the healthCheck.routes.js
 app.use('/api/v1/healthCheck', healthCheckRouter);
+
+app.use('/api/v1/auth', authRouter);
 
 export default app;

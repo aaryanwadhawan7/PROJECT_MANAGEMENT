@@ -20,5 +20,7 @@ class ApiError extends Error {
 }
 }
 
+export { ApiError };
+
 // stack : This will show where the error occurred in the code
 // error = [] : validation error
