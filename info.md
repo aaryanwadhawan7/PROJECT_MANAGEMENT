@@ -94,6 +94,13 @@ MAIL_FROM_EMAIL
 - Define sendTemplateEmail func.
 - 'node testEmail.js' to chdck the generated email via mailtrap
 
+Simple Workflow (Registeration)
+1. take some data
+2. validate the data
+3. check DB if user already exist
+4. SAVED the new user
+5. user verification : email
+6. Response to the request
 
 
 

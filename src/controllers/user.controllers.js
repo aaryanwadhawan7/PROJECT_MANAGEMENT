@@ -1,0 +1,78 @@
+import { User } from '../models/user.models';
+import { ApiError } from '../utils/api-error';
+import { ApiResponse } from '../utils/api-response';
+import { asyncHandler } from '../utils/asyncHandler';
+import { sendTemplateEmail } from '../utils/mail';
+import { emailVerficationMailGen } from '../utils/template';
+import dotenv from 'dotenv';
+dotenv.config ();
+
+const generateAccessAndRefreshToken = async (userId) => {
+    try {
+        const user = User.findById (userId);
+        const accessToken = user.generatingAccessToken();
+        const refreshToken = user.generatingRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save({validateBeforeSave : false});
+        return {accessToken, refreshToken};
+    } catch (error) {
+        throw new ApiError (500,
+            "Something went wrong while generating access token"
+        )
+    }
+}
+
+const resgisterUser = asyncHandler(async (req, res) => {
+    const {email, username, password, role } = req.body;
+
+    const existedUser = User.findOne ({
+        $or : [{username}, {email}]
+    })
+
+    if (!existedUser) {
+        throw new ApiError (409, "User with email or username already exists", []);
+    }
+
+    const user = await User.create ({
+        email,
+        password,
+        username,
+        isEmailVerified : false
+    })
+
+    const {unHashedToken, hashedToken, tokenExpiry} = user.generateTemporaryToken();
+    
+    user.emailVerificationToken = hashedToken;
+    user.emailVerificationExpiry = tokenExpiry;
+
+    await user.save ({validateBeforeSave : false});
+
+    await sendTemplateEmail ({
+        to : user?.email,
+        subject : "Please verify your email",
+        templateBody : emailVerficationMailGen (
+            user.username,
+            `${process.env.APP_URL}/api/v1/users/verify-email/${unHashedToken}`
+            // http://localhost:3000/api/v1/users/verify-email/<unHashedToken>
+        )
+    })
+
+    const createdUser = await User.findById (user._id).select (
+        "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+    );
+
+    if (!createdUser) {
+        throw new ApiError (500, "Something went wrong while registering a user")
+    };
+
+    return res
+    .status (201)
+    .json (
+        new ApiResponse(
+            200,
+            "User registered successfully and verification email has been sent on your email",
+            {user : createdUser}
+        )
+    )
+})
