@@ -1,12 +1,14 @@
-import { Router } from 'express';
-import { registerUser } from "../controllers/user.controllers.js";
-import { userRegisterValidator } from '../validators/index.js';
-import { login } from '../controllers/user.controllers.js';
+import { Router } from "express";
+import { registerUser, loginUser } from "../controllers/user.controllers.js";
+import { userRegisterValidator, userLoginValidator } from "../validators/index.js";
+import { validate } from "../middlewares/validator.middleware.js";
 
+const router = Router();
 
-const router = Router ();
+// Register route
+router.post("/register", userRegisterValidator(), validate, registerUser);
 
-router.route ('/register').post (userRegisterValidator(), Validite, registerUser);
-router.route ('/login').post (login);
+// Login route
+router.post("/login", userLoginValidator(), validate, loginUser);
 
 export default router;

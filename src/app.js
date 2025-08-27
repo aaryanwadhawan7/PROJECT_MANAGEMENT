@@ -28,4 +28,24 @@ app.use('/api/v1/healthCheck', healthCheckRouter);
 
 app.use('/api/v1/auth', authRouter);
 
+
+// Global error handler
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    // our custom ApiError
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+      errors: err.errors || [],
+    });
+  }
+
+  // fallback for unknown errors
+  console.error(err);
+  return res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
+});
+
 export default app;
