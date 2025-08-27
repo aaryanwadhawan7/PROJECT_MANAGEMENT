@@ -102,5 +102,7 @@ Simple Workflow (Registeration)
 5. user verification : email
 6. Response to the request
 
+- Fix Cookies Logic and Add more routes for my backend project
+
 
 
